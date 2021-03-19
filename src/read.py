@@ -1,7 +1,13 @@
 import reserved
 from txtTools import *
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
-def readMenu():
+def ChooseFile():
+    Tk().withdraw()
+    return askopenfilename()
+
+def readMenu(route):
     text = []
     file = open("menu.txt")
     # INICIO
@@ -59,4 +65,4 @@ def readMenu():
     for i in range(len(text)):
         print(i, f"->{text[i]}<-")
 
-readMenu()
+readMenu("")
