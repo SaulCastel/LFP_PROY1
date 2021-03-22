@@ -2,6 +2,8 @@ import webbrowser
 from menu import *
 import xml.etree.ElementTree as ET
 
+from order import Order
+
 def genMen(menu:Menu,limit=None):
     # Etiquetas iniciales
     file = open("pages/menu.html","w")
@@ -90,6 +92,36 @@ def genMen(menu:Menu,limit=None):
     tree.write(file_or_filename=file,encoding="unicode",short_empty_elements=True)
     file.close()
     webbrowser.open_new_tab(f"pages/menu.html")
+
+def genOrder(orden:Order):
+    file = open(f"pages/factura.html","w")
+    file.write("<!DOCTYPE html>\n")
+    root = ET.Element("html")
+    head = ET.Element("head")
+    title = ET.Element("title")
+    title.text = type
+    head.append(title)
+    body = ET.Element("body")
+    name = ET.Element("h1")
+    body.append(name)
+    name.text = orden.name
+    nit = ET.Element("h1")
+    nit.text = orden.nit
+    body.append(nit)
+    add = ET.Element("h1")
+    add.text = orden.add
+    body.append(add)
+    for elem in orden.elements:
+        row = ET.Element("h2")
+        row.text = f"{elem.num} - {elem.id.name} - Q{elem.id.price} - Q{float(elem.id.price)*elem.num}"
+        body.append(row)
+    root.append(head)
+    root.append(body)
+    tree = ET.ElementTree(root)
+    ET.indent(tree, space="\t", level=0)
+    tree.write(file_or_filename=file,encoding="unicode",short_empty_elements=True)
+    file.close()
+    webbrowser.open_new_tab(f"pages/factura.html")
 
 def genTable(entries:list,type:str):
     file = open(f"pages/{type}.html","w")

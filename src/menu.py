@@ -20,3 +20,9 @@ class Menu:
 
     def newSect(self,sec:Section):
         self.sect.append(sec)
+
+    def getItem(self,id:str):
+        for section in self.sect:
+            for item in section.items:
+                if id == item.id:
+                    return item
