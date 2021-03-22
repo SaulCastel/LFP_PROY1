@@ -2,26 +2,7 @@ import read
 import generate
 from menu import *
 
-prod1 = []
-prod2 = []
-for i in range(1,6):
-    id = f"pos_{i}"
-    name = f"postre {i}"
-    price = f"{10*i}.{5*i}"
-    desc = f"postre no. {i}"
-    item = Item(id,name,price,desc)
-    prod1.append(item)
-for i in range(1,6):
-    id = f"cen_{i}"
-    name = f"cena {i}"
-    price = f"{10*i}.{5*i}"
-    desc = f"cena no. {i}"
-    item = Item(id,name,price,desc)
-    prod2.append(item)
-section1 = Section("Postres",prod1)
-section2 = Section("Cenas",prod2)
-sect = [section1,section2]
-menuP = Menu("Prueba",sect)
+menu:Menu = None
 
 messages = [
     "1. Cargar menu",
@@ -44,14 +25,19 @@ while True:
     if option == "1":
         route = read.ChooseFile()
         menu = read.readMenu(route)
+        if menu is None:
+            print("> El menu tuvo errores")
     if option == "3":
-        opt = input("> ¿Quieres poner un limite(y/n)?: ")
-        if opt.lower() == "y":
-            limit = input("\t> ¿Limite?: ")
-            try:
-                limit = float(limit)
-                generate.genMen(menuP,limit)
-            except:
-                print("> Limite invalido...")
-        elif opt.lower() == "n":
-            generate.genMen(menuP)
+        if menu is not None:
+            opt = input("> ¿Quieres poner un limite(y/n)?: ")
+            if opt.lower() == "y":
+                limit = input("\t> ¿Limite?: ")
+                try:
+                    limit = float(limit)
+                    generate.genMen(menu,limit)
+                except:
+                    print("> Limite invalido...")
+            elif opt.lower() == "n":
+                generate.genMen(menu)
+        else:
+            print("> No hay un menu cargado")

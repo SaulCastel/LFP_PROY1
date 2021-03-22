@@ -4,16 +4,16 @@ from tkinter.filedialog import askopenfilename
 from menu import *
 from table import *
 import generate as gen
+import reserved as res
 
 def ChooseFile():
     Tk().withdraw()
     return askopenfilename()
 
-def read(route):
-    file = open("menu.txt",)
+def readMenu(route)->Menu:
+    file = open(route)
     content = file.read()
     text = toArray(content)
-    #print(text)
     tokens = []
     errors = []
     char:str = ""
@@ -126,6 +126,48 @@ def read(route):
         gen.genTable(tokens,"Tokens")
     if len(errors) > 0:
         gen.genTable(errors,"Errores")
+        return None
+    else:
+        return createMenu(tokens)
 
-def createMenu(tokens):
-    pass
+def createMenu(tokens:list)-> Menu:
+    menu:Menu = None
+    sec:Section = None
+    id = ""
+    name = ""
+    price = ""
+    desc = ""
+    state = 0
+    while len(tokens) > 0:
+        string = tokens.pop(0).string
+        if state == 0:
+            if res.cadena.match(string):
+                menu = Menu(ridAps(string))
+                state = 1
+        elif state == 1:
+            if res.cadena.match(string):
+                sec = Section(ridAps(string))
+                menu.newSect(sec)
+            elif string == "[":
+                state = 2
+            elif string == "]":
+                sec.newItem(Item(id,name,price,desc))
+        elif state == 2:
+            if res.id.match(string):
+                id = string
+                state = 3
+        elif state == 3:
+            if res.cadena.match(string):
+                name = ridAps(string)
+                state = 4
+        elif state == 4:
+            if res.numero.match(string):
+                price:str = string
+                if price.endswith("."):
+                    price += "00"
+                state = 5
+        elif state == 5:
+            if res.cadena.match(string):
+                desc = ridAps(string)
+                state = 1
+    return menu

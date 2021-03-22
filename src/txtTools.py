@@ -15,3 +15,9 @@ def toStr(array:list)->str:
     for char in array:
         string += char
     return string
+
+def ridAps(string:str)->str:
+    '''
+    Quita las comillas de una cadena
+    '''
+    return string.replace("'","")
