@@ -49,6 +49,8 @@ def read(route:str,type:str):
         elif state == 1:
             if char.islower() or char.isdigit() or char == "_":
                 lex += char
+                if len(text) == 0:
+                    tokens.append(Token(row,col,lex,"Indentificador"))
             elif char == " " or char == ";" or char == "=" or char == "\n" or char == "\t":
                 if lex == "restaurante":
                     if not word:

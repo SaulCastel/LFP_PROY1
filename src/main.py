@@ -31,8 +31,8 @@ while True:
     elif option == "2":
         route = read.ChooseFile()
         orden = read.read(route,"orden")
-        if menu is None:
-            print("> El menu tuvo errores")
+        if orden is None:
+            print("> La orden tuvo errores")
     elif option == "3":
         if menu is not None:
             opt = input("> ¿Quieres poner un limite(y/n)?: ")
@@ -52,6 +52,7 @@ while True:
             for elem in orden.elements:
                 id = elem.id
                 elem.id = menu.getItem(id)
+            orden.restName(menu.name)
             generate.genOrder(orden)
         else:
             print("> No hay una orden cargada")

@@ -94,17 +94,20 @@ def genMen(menu:Menu,limit=None):
     webbrowser.open_new_tab(f"pages/menu.html")
 
 def genOrder(orden:Order):
-    file = open(f"pages/factura.html","w")
+    file = open("pages/factura.html","w")
     file.write("<!DOCTYPE html>\n")
     root = ET.Element("html")
     head = ET.Element("head")
     title = ET.Element("title")
-    title.text = type
+    title.text = "factura"
     head.append(title)
     body = ET.Element("body")
+    rest = ET.Element("h1")
+    rest.text = orden.rest
+    body.append(rest)
     name = ET.Element("h1")
-    body.append(name)
     name.text = orden.name
+    body.append(name)
     nit = ET.Element("h1")
     nit.text = orden.nit
     body.append(nit)

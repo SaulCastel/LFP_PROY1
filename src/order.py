@@ -15,3 +15,6 @@ class Order:
     
     def newElem(self,elem:Element):
         self.elements.append(elem)
+
+    def restName(self,name:str):
+        self.rest = name
