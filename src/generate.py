@@ -1,28 +1,8 @@
+import webbrowser
 from menu import *
 import xml.etree.ElementTree as ET
 
-prod1 = []
-prod2 = []
-for i in range(1,6):
-    id = f"pos_{i}"
-    name = f"postre {i}"
-    price = f"{10*i}.{5*i}"
-    desc = f"postre no. {1}"
-    item = Item(id,name,price,desc)
-    prod1.append(item)
-for i in range(1,6):
-    id = f"cen_{i}"
-    name = f"cena {i}"
-    price = f"{10*i}.{5*i}"
-    desc = f"cena no. {1}"
-    item = Item(id,name,price,desc)
-    prod2.append(item)
-section1 = Section("Postres",prod1)
-section2 = Section("Cenas",prod2)
-sect = [section1,section2]
-menu = Menu("Prueba",sect)
-
-def genMen(menu:Menu):
+def genMen(menu:Menu,limit=None):
     # Etiquetas iniciales
     file = open("pages/menu.html","w")
     file.write("<!DOCTYPE html>\n")
@@ -31,12 +11,18 @@ def genMen(menu:Menu):
     title = ET.Element("title")
     name:str = menu.name
     title.text = f"{name}"
-    args = {
+    fontArgs = {
+        "rel" :"stylesheet",
+        "href" :"https://fonts.googleapis.com/css?family=Merienda" 
+    }
+    font = ET.Element("link",fontArgs)
+    cssArgs = {
         "rel" :"stylesheet",
         "href" :"styles/menu.css"
     }
-    css = ET.Element("link",args)
+    css = ET.Element("link",cssArgs)
     head.append(title)
+    head.append(font)
     head.append(css)
     body = ET.Element("body")
     # Llenar el body
@@ -58,30 +44,112 @@ def genMen(menu:Menu):
         sect.append(sectTitle)
         # Agregar items en secciones
         for item in section.items:
-            elem = ET.Element("div",{"class":"item"})
-            info = ET.Element("div",{"class":"info"})
-            prod = ET.Element("h3")
-            price = ET.Element("h3")
-            prod.text = f"{item.name}"
-            price.text = f"Q{item.price}"
-            points = ET.Element("div",{"class":"points"})
-            points.text = " "
-            desc = ET.Element("h5",{"class":"desc"})
-            desc.text = f"{item.desc}"
-            info.append(prod)
-            info.append(points)
-            info.append(price)
-            elem.append(info)
-            elem.append(desc)
-            sect.append(elem)
+            if limit == None:
+                elem = ET.Element("div",{"class":"item"})
+                info = ET.Element("div",{"class":"info"})
+                prod = ET.Element("h3")
+                price = ET.Element("h3")
+                prod.text = f"{item.name}"
+                price.text = f"Q{item.price}"
+                points = ET.Element("div",{"class":"points"})
+                points.text = " "
+                desc = ET.Element("h5",{"class":"desc"})
+                desc.text = f"{item.desc}"
+                info.append(prod)
+                info.append(points)
+                info.append(price)
+                elem.append(info)
+                elem.append(desc)
+                sect.append(elem)
+            else:
+                compare = item.price    
+                if not (float(compare) > limit):
+                    elem = ET.Element("div",{"class":"item"})
+                    info = ET.Element("div",{"class":"info"})
+                    prod = ET.Element("h3")
+                    price = ET.Element("h3")
+                    prod.text = f"{item.name}"
+                    price.text = f"Q{item.price}"
+                    points = ET.Element("div",{"class":"points"})
+                    points.text = " "
+                    desc = ET.Element("h5",{"class":"desc"})
+                    desc.text = f"{item.desc}"
+                    info.append(prod)
+                    info.append(points)
+                    info.append(price)
+                    elem.append(info)
+                    elem.append(desc)
+                    sect.append(elem)
         box.append(sect)
     body.append(box)            
     # Finalizando HTML
     root.append(head)
     root.append(body)
     tree = ET.ElementTree(root)
-    ET.indent(tree, space="  ", level=0)
+    ET.indent(tree, space="\t", level=0)
     tree.write(file_or_filename=file,encoding="unicode",short_empty_elements=True)
     file.close()
+    webbrowser.open_new_tab(f"pages/menu.html")
 
-genMen(menu)
+def genTable(entries:list,type:str):
+    file = open(f"pages/{type}.html","w")
+    file.write("<!DOCTYPE html>\n")
+    root = ET.Element("html")
+    head = ET.Element("head")
+    title = ET.Element("title")
+    title.text = type
+    cssArgs = {
+        "rel" :"stylesheet",
+        "href" :"styles/tablas.css"
+    }
+    css = ET.Element("link",cssArgs)
+    head.append(title)
+    head.append(css)
+    body = ET.Element("body")
+    # Llenando el body
+    table = ET.Element("table")
+    header = ET.Element("tr")
+    c0 = ET.Element("th")
+    c0.text = "no."
+    header.append(c0)
+    c3 = ET.Element("th")
+    c3.text = type
+    header.append(c3)
+    c1 = ET.Element("th")
+    c1.text = "Fila"
+    header.append(c1)
+    c2 = ET.Element("th")
+    c2.text = "Columna"
+    header.append(c2)
+    c4 = ET.Element("th")
+    c4.text = "Descripcion"
+    header.append(c4)
+    table.append(header)
+    index = 0
+    for entry in entries:
+        index += 1
+        row = ET.Element("tr")
+        d0 = ET.Element("td")
+        d0.text = str(index)
+        row.append(d0)
+        d3 = ET.Element("td")
+        d3.text = str(entry.string)
+        row.append(d3)
+        d1 = ET.Element("td")
+        d1.text = str(entry.row)
+        row.append(d1)
+        d2 = ET.Element("td")
+        d2.text = str(entry.col)
+        row.append(d2)
+        d4 = ET.Element("td")
+        d4.text = str(entry.desc)
+        row.append(d4)
+        table.append(row)  
+    body.append(table)
+    root.append(head)
+    root.append(body)
+    tree = ET.ElementTree(root)
+    ET.indent(tree, space="\t", level=0)
+    tree.write(file_or_filename=file,encoding="unicode",short_empty_elements=True)
+    file.close()
+    webbrowser.open_new_tab(f"pages/{type}.html")
